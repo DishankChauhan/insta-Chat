@@ -1,0 +1,28 @@
+rules_version = '2';
+service cloud.firestore {
+  match /databases/{database}/documents {
+    match /rooms/{roomId} {
+      allow read: if request.auth != null;
+      allow create: if request.auth != null;
+      allow update: if request.auth != null && 
+        (resource.data.createdBy == request.auth.uid || 
+         request.resource.data.members.hasAll(resource.data.members));
+      
+      match /messages/{messageId} {
+        allow read: if request.auth != null;
+        allow create: if request.auth != null && 
+          exists(/databases/$(database)/documents/rooms/$(roomId)) &&
+          get(/databases/$(database)/documents/rooms/$(roomId)).data.members.hasAny([request.auth.uid]);
+      }
+    }
+    
+    match /users/{userId} {
+      allow read: if request.auth != null;
+      allow write: if request.auth.uid == userId;
+    }
+    
+    match /calls/{callId} {
+      allow read, write: if request.auth != null;
+    }
+  }
+}
