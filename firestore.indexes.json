@@ -1,29 +1,19 @@
 {
-    "indexes": [
-      {
-        "collectionGroup": "rooms",
-        "queryScope": "COLLECTION",
-        "fields": [
-          {
-            "fieldPath": "members",
-            "arrayConfig": "CONTAINS"
-          },
-          {
-            "fieldPath": "createdAt",
-            "order": "DESC"
-          }
-        ]
-      },
-      {
-        "collectionGroup": "messages",
-        "queryScope": "COLLECTION",
-        "fields": [
-          {
-            "fieldPath": "timestamp",
-            "order": "DESC"
-          }
-        ]
-      }
-    ],
-    "fieldOverrides": []
-  }
+  "indexes": [
+    {
+      "collectionGroup": "rooms",
+      "queryScope": "COLLECTION",
+      "fields": [
+        {
+          "fieldPath": "members",
+          "arrayConfig": "CONTAINS"
+        },
+        {
+          "fieldPath": "createdAt",
+          "order": "DESCENDING"
+        }
+      ]
+    }
+  ],
+  "fieldOverrides": []
+}

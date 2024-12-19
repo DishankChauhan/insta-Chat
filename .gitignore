@@ -9,8 +9,6 @@
 # next.js
 /.next/
 /out/
-.next
-next-env.d.ts
 
 # production
 /build
@@ -18,7 +16,6 @@ next-env.d.ts
 # misc
 .DS_Store
 *.pem
-Thumbs.db
 
 # debug
 npm-debug.log*
@@ -27,37 +24,11 @@ yarn-error.log*
 
 # local env files
 .env*.local
-.env.development
-.env.production
-.env
-
-# vercel
-.vercel
 
 # firebase
 .firebase/
-firebase-debug.log*
-firestore-debug.log*
-ui-debug.log*
+firebase-debug.log
 
-# IDE
-.idea/
-.vscode/
-*.swp
-*.swo
-
-# PWA files
-**/public/sw.js
-**/public/workbox-*.js
-**/public/worker-*.js
-**/public/sw.js.map
-**/public/workbox-*.js.map
-**/public/worker-*.js.map
-
-# TypeScript
+# typescript
 *.tsbuildinfo
-
-# Temporary files
-.temp
-.tmp
-.cache
+next-env.d.ts

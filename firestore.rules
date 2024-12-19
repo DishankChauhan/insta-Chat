@@ -1,28 +1,55 @@
 rules_version = '2';
 service cloud.firestore {
   match /databases/{database}/documents {
+    // Helper functions
+    function isSignedIn() {
+      return request.auth != null;
+    }
+    
+    function isCurrentUser(userId) {
+      return request.auth.uid == userId;
+    }
+
+    // User presence and profile rules
+    match /users/{userId} {
+      allow read: if isSignedIn();
+      allow write: if isSignedIn() && (
+        isCurrentUser(userId) || 
+        // Allow heartbeat updates
+        (request.resource.data.diff(resource.data).affectedKeys()
+          .hasOnly(['heartbeat', 'status', 'lastSeen']))
+      );
+    }
+
+    // Chat room rules
     match /rooms/{roomId} {
-      allow read: if request.auth != null;
-      allow create: if request.auth != null;
-      allow update: if request.auth != null && 
-        (resource.data.createdBy == request.auth.uid || 
-         request.resource.data.members.hasAll(resource.data.members));
+      allow read: if isSignedIn();
+      allow create: if isSignedIn();
+      allow update: if isSignedIn() && (
+        resource.data.createdBy == request.auth.uid || 
+        request.resource.data.members.hasAll(resource.data.members)
+      );
       
+      // Messages in rooms
       match /messages/{messageId} {
-        allow read: if request.auth != null;
-        allow create: if request.auth != null && 
+        allow read: if isSignedIn();
+        allow create: if isSignedIn() && 
           exists(/databases/$(database)/documents/rooms/$(roomId)) &&
           get(/databases/$(database)/documents/rooms/$(roomId)).data.members.hasAny([request.auth.uid]);
       }
     }
     
-    match /users/{userId} {
-      allow read: if request.auth != null;
-      allow write: if request.auth.uid == userId;
-    }
-    
+    // Video call rules
     match /calls/{callId} {
-      allow read, write: if request.auth != null;
+      allow read, write: if isSignedIn();
+      
+      match /participants/{participantId} {
+        allow read, write: if isSignedIn();
+      }
+      
+      match /signals/{signalId} {
+        allow read, write: if isSignedIn();
+      }
     }
   }
 }
